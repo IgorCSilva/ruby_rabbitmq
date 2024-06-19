@@ -1,23 +1,33 @@
 
 require 'bunny'
 
-# Start connection.
-connection = Bunny.new(ENV['RABBITMQ_URL'])
-connection.start()
+def start_consumer
 
-# Create channel.
-channel = connection.create_channel()
-queue = channel.queue("test_queue")
-
-puts " [*] Waiting for messages. To exit press CTRL+C."
-
-begin
-  queue.subscribe(block: true) do |delivery_info, properties, body|
-    puts " [x] Received '#{body}'."
+  # Start connection.
+  connection = Bunny.new(ENV['RABBITMQ_URL'], automatically_recover: true)
+  connection.start()
+  
+  # Create channel.
+  channel = connection.create_channel()
+  queue = channel.queue("test_queue")
+  
+  puts " [*] Waiting for messages. To exit press CTRL+C."
+  
+  begin
+    queue.subscribe(block: true) do |delivery_info, properties, body|
+      puts " [x] Received '#{body}'."
+    end
+  
+  rescue Interrupt => _
+    # Stop connection.
+    connection.close
+    exit(0)
   end
 
-rescue Interrupt => _
-  # Stop connection.
-  connection.close
-  exit(0)
+rescue
+  puts " [!] General Exception. Retrying in 5 seconds..."
+  sleep 5
+  retry
 end
+
+start_consumer()
