@@ -6,7 +6,7 @@ Here we have three services:
 - **ruby_rabbitmq_publisher:** the ruby implementation to send messages
 - **ruby_rabbitmq_consumer:** the ruby implementation to receive messages
 
-**Obs.:** Don't forget to update the code in this tutorial to replace the application name to your application name.
+**Obs.:** The application name used to create this tutorial is `ruby_rabbitmq`. Update to your application name.
 
 ## Docker configurations
 
