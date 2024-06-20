@@ -1,6 +1,16 @@
 # RubyRabbitmq
 
-The docker-compose file with RabbitMQ configuration.
+A simple ruby application using RabbitMQ to send messages.
+Here we have three services:
+- **rabbitmq:** the message broker
+- **ruby_rabbitmq_publisher:** the ruby implementation to send messages
+- **ruby_rabbitmq_consumer:** the ruby implementation to receive messages
+
+**Obs.:** Don't forget to update the code in this tutorial to replace the application name to your application name.
+
+## Docker configurations
+
+Set the docker-compose.yaml file with RabbitMQ configuration.
 ```yaml
 version: '3'
 
@@ -37,6 +47,7 @@ services:
       RABBITMQ_URL: amqp://user:password@rabbitmq:5672
 
 ```
+**Obs.:** Put credentials in docker-compose file isn't a safe way. After update your code to use `.env` file.
 
 The Dockerfile:
 ```yaml
@@ -63,6 +74,7 @@ COPY . .
 CMD ["tail", "-f", "/dev/null"]
 ```
 
+## Configuration
 We'll use bunny to interact with RabbitMQ.
 
 Add gem to Genfile:
@@ -132,11 +144,11 @@ end
 
 ## Running the application
 
-Run all services:
+Run all services:  
 `docker-compose up --build`
 
-You can access the RabbitMQ interface: `http://localhost:15672`.
-Siging with credentials defined.
+You can access the RabbitMQ interface here: `http://localhost:15672`.  
+Siging with defined credentials in docker-compose file.
 
 Get inside the consumer container:  
 `docker exec -it ruby_rabbitmq_consumer bash`
@@ -149,6 +161,8 @@ Get inside the publisher container:
 
 Run the publisher:  
 `ruby lib/app/publisher.rb`
+
+At this point you should see the messages sent in consumer console.
 
 ## Simulate failure
 
@@ -189,10 +203,16 @@ end
 start_consumer()
 ```
 
-Shutdown the RabbitMQ.
+Shutdown the RabbitMQ:  
 `docker-compose stop rabbitmq`
 
 Now, you'll see the retry messages.
 
-Then start again.
+Then start again:  
 `docker-compose start rabbitmq`
+
+Send the messages again from publisher and see them in consumer shell.
+
+## Conclusion
+
+You configured the RabbitMQ in a ruby application and sent messages from publisher to consumer. You're able to set RabbitMQ in your applications and keep learning without the need RabbitMQ local installation.
